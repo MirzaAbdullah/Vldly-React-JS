@@ -67,37 +67,40 @@ class Movies extends Component {
     }
 
     return (
-      <div className="row">
-        <div className="col-2 mt-3">
-          <ListGroup
-            items={allGenre}
-            selectedItem={selectedGenre}
-            onItemSelect={this.handleSelectedGenre}
-          />
-        </div>
-        <div className="col-10 mt-3">
-          <span className="ml-3">
-            Showing {totalFilteredLength} movies in the database
-          </span>
-          <div className="col-12 mt-2 table-responsive">
-            <MoviesGrid
-              movies={movies}
-              sortColumn={sortColumn}
-              onDelete={this.handleDelete}
-              onLike={this.handleLike}
-              onSort={this.handleSort}
+      <React.Fragment>
+        <h1>Movies</h1>
+        <div className="row">
+          <div className="col-2 mt-3">
+            <ListGroup
+              items={allGenre}
+              selectedItem={selectedGenre}
+              onItemSelect={this.handleSelectedGenre}
             />
           </div>
-          <div className="col-12">
-            <Pagination
-              moviesCount={totalFilteredLength}
-              pageSize={pageSize}
-              currentPage={currentPage}
-              onPageChange={this.handlePageChange}
-            />
+          <div className="col-10 mt-3">
+            <span className="ml-3">
+              Showing {totalFilteredLength} movies in the database
+            </span>
+            <div className="col-12 mt-2 table-responsive">
+              <MoviesGrid
+                movies={movies}
+                sortColumn={sortColumn}
+                onDelete={this.handleDelete}
+                onLike={this.handleLike}
+                onSort={this.handleSort}
+              />
+            </div>
+            <div className="col-12">
+              <Pagination
+                moviesCount={totalFilteredLength}
+                pageSize={pageSize}
+                currentPage={currentPage}
+                onPageChange={this.handlePageChange}
+              />
+            </div>
           </div>
         </div>
-      </div>
+      </React.Fragment>
     );
   }
 
