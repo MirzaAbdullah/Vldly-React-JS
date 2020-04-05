@@ -5,6 +5,8 @@ import { getGenres } from "../services/fakeGenreService";
 import { paginate } from "../utils/paginate";
 import ListGroup from "./common/ListGroup";
 import MoviesGrid from "./MoviesGrid";
+import SearchBox from "./common/SearchBox";
+import { Link } from "react-router-dom";
 import _ from "lodash";
 
 class Movies extends Component {
@@ -13,6 +15,8 @@ class Movies extends Component {
     genres: [],
     pageSize: 4,
     currentPage: 1,
+    searchQuery: "",
+    selectedGenre: null,
     sortColumn: { path: "title", order: "asc" }
   };
 
@@ -28,15 +32,26 @@ class Movies extends Component {
       pageSize,
       currentPage,
       selectedGenre,
+      searchQuery,
       movies: allMovies,
       sortColumn
     } = this.state;
 
     //Filter movies lists according to selectedGenre
-    const filtered =
-      selectedGenre && selectedGenre._id
-        ? allMovies.filter(m => m.genre._id === selectedGenre._id)
-        : allMovies;
+    // const filtered =
+    //   selectedGenre && selectedGenre._id
+    //     ? allMovies.filter(m => m.genre._id === selectedGenre._id)
+    //     : allMovies;
+
+    //Filter movies lists according to selectedGenre or SearchBox
+    let filtered = allMovies;
+    if (searchQuery) {
+      filtered = allMovies.filter(m =>
+        m.title.toLowerCase().startsWith(searchQuery.toLocaleLowerCase())
+      );
+    } else if (selectedGenre && selectedGenre._id) {
+      filtered = allMovies.filter(m => m.genre._id === selectedGenre._id);
+    }
 
     //Sort the Column according to the sortColumn
     const sorted = _.orderBy(filtered, [sortColumn.path], [sortColumn.order]);
@@ -55,6 +70,7 @@ class Movies extends Component {
       selectedGenre,
       movies: allMovies,
       genres: allGenre,
+      searchQuery,
       sortColumn
     } = this.state;
 
@@ -78,9 +94,20 @@ class Movies extends Component {
             />
           </div>
           <div className="col-10 mt-3">
+            <div className="col-12 mb-2">
+              <Link to="/movies/new" className="btn btn-primary">
+                New Movie
+              </Link>
+            </div>
             <span className="ml-3">
               Showing {totalFilteredLength} movies in the database
             </span>
+            <div className="col-12 mb-2 mt-2">
+              <SearchBox
+                value={searchQuery}
+                onChange={this.handleSearch}
+              ></SearchBox>
+            </div>
             <div className="col-12 mt-2 table-responsive">
               <MoviesGrid
                 movies={movies}
@@ -109,7 +136,11 @@ class Movies extends Component {
   };
 
   handleSelectedGenre = genre => {
-    this.setState({ selectedGenre: genre, currentPage: 1 });
+    this.setState({ selectedGenre: genre, searchQuery: "", currentPage: 1 });
+  };
+
+  handleSearch = query => {
+    this.setState({ searchQuery: query, selectedGenre: null, currentPage: 1 });
   };
 
   handlePageChange = page => {
