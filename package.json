@@ -1,6 +1,6 @@
 {
-  "name": "ecommerce",
-  "version": "0.1.0",
+  "name": "vidly",
+  "version": "1.0.0",
   "private": true,
   "dependencies": {
     "@fortawesome/fontawesome-free": "^5.12.1",
