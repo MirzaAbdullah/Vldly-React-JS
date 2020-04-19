@@ -1,24 +1,20 @@
-import React, { Component } from "react";
+import React from "react";
 import Joi from "joi-browser";
 import Form from "./common/Form";
-import { getGenres } from "../services/fakeGenreService";
-import { getMovie, saveMovie } from "../services/fakeMovieService";
+import { getGenres } from "../services/genreService";
+import { getMovie, saveMovie } from "../services/movieService";
 
 class MovieForm extends Form {
   state = {
     data: { title: "", genreId: "", numberInStock: "", dailyRentalRate: "" },
     errors: {},
-    genres: []
+    genres: [],
   };
 
   schema = {
     _id: Joi.string(),
-    title: Joi.string()
-      .required()
-      .label("Title"),
-    genreId: Joi.string()
-      .required()
-      .label("Genre"),
+    title: Joi.string().required().label("Title"),
+    genreId: Joi.string().required().label("Genre"),
     numberInStock: Joi.number()
       .required()
       .min(0)
@@ -28,23 +24,33 @@ class MovieForm extends Form {
       .required()
       .min(0)
       .max(10)
-      .label("Daily Rental Rate")
+      .label("Daily Rental Rate"),
   };
 
-  componentDidMount() {
+  async componentDidMount() {
+    await this.populateGenres();
+    await this.populateMovie();
+  }
+
+  async populateGenres() {
     //get all Genre
-    const genres = getGenres();
+    const { data: genres } = await getGenres();
     this.setState({ genres });
+  }
 
-    //If movieId is 'new' return - it's considered as new form to add
-    const movieId = this.props.match.params.id;
-    if (movieId === "new") return;
+  async populateMovie() {
+    try {
+      //If movieId is 'new' return - it's considered as new form to add
+      const movieId = this.props.match.params.id;
 
-    //If movieId is !== 'new' return - it's considered as to edit
-    const movie = getMovie(movieId);
-    if (!movie) return this.props.history.replace("/not-found");
-
-    this.setState({ data: this.mapToViewModel(movie) });
+      if (movieId === "new") return;
+      //If movieId is !== 'new' return - it's considered as to edit
+      const { data: movie } = await getMovie(movieId);
+      this.setState({ data: this.mapToViewModel(movie) });
+    } catch (ex) {
+      if (ex.response && ex.response.status === 404)
+        this.props.history.replace("/not-found");
+    }
   }
 
   mapToViewModel(movie) {
@@ -53,13 +59,13 @@ class MovieForm extends Form {
       title: movie.title,
       genreId: movie.genre._id,
       numberInStock: movie.numberInStock,
-      dailyRentalRate: movie.dailyRentalRate
+      dailyRentalRate: movie.dailyRentalRate,
     };
   }
 
-  doSubmit = () => {
+  doSubmit = async () => {
     //Call to Server
-    saveMovie(this.state.data);
+    await saveMovie(this.state.data);
 
     // redirects to movies page
     this.props.history.push("/movies");
@@ -82,21 +88,3 @@ class MovieForm extends Form {
 }
 
 export default MovieForm;
-
-// const MovieForm = ({ match, history }) => {
-//   return (
-//     <div className="row">
-//       <div className="col-12">
-//         <h1>Movie Form {match.params.id}</h1> <br />
-//         <button
-//           className="btn btn-primary btn-sm"
-//           onClick={() => history.push("/movies")}
-//         >
-//           Save
-//         </button>
-//       </div>
-//     </div>
-//   );
-// };
-
-// export default MovieForm;
