@@ -78,8 +78,8 @@ class Movies extends Component {
     } = this.state;
 
     const { length: moviesCount } = allMovies;
-
     const { totalFilteredLength, data: movies } = this.getPagedData();
+    const { user } = this.props;
 
     if (moviesCount === 0) {
       return <p className="mt-2">There are no movies in the database</p>;
@@ -97,11 +97,13 @@ class Movies extends Component {
             />
           </div>
           <div className="col-10 mt-3">
-            <div className="col-12 mb-2">
-              <Link to="/movies/new" className="btn btn-primary">
-                New Movie
-              </Link>
-            </div>
+            {user && (
+              <div className="col-12 mb-2">
+                <Link to="/movies/new" className="btn btn-primary">
+                  New Movie
+                </Link>
+              </div>
+            )}
             <span className="ml-3">
               Showing {totalFilteredLength} movies in the database
             </span>
