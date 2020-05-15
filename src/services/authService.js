@@ -1,8 +1,7 @@
 import http from "./httpService";
 import JwtDecode from "jwt-decode";
-import { apiUrl } from "../config.json";
 
-const apiEndpoint = apiUrl + "/auth";
+const apiEndpoint = "/auth";
 const tokenKey = "token";
 
 //Setting token to Axios in Http Service to ensure no-Bidirectional dependencies
