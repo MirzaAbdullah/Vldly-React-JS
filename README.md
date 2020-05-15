@@ -13,3 +13,8 @@ npm i
 after this, you will be able to run the application
  
 npm start
+
+As I have send Environments for the application (change connection string in .env.development according to your localhost url from vidly-api project), for local use
+
+npm run build
+serve -s build
