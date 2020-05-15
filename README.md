@@ -19,4 +19,4 @@ As I have send Environments for the application (change connection string in .en
 npm run build
 serve -s build
 
-Live URL: https://desolate-meadow-25379.herokuapp.com/movies
+Live URL: https://desolate-meadow-25379.herokuapp.com/
